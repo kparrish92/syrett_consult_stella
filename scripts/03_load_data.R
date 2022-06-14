@@ -24,6 +24,11 @@ se_asian = se_asian %>%
 non_multi = non_multi %>% 
   select(-speaker)
 
+
+no_cats_df = read.csv(here("data", "tidy", "desc_all.csv"))
+
+no_cats_df_b = read.csv(here("data", "tidy", "desc_asian.csv"))
+
 # Run with 3, 5, and 12? 
 
 

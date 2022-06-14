@@ -19,7 +19,7 @@ source(here("scripts", "03_load_data.R"))
 
 The following is an overview of a series of hierarchical clustering analyses for the English monolingual group. 
 First, categorizations were standardized and a differences measure in euclidean distance was computed. 
-The clusters were determined usingthe Ward d2 algorithm in a stepwise fashion. 
+The clusters were determined using the Ward d2 algorithm in a stepwise fashion. 
 
 ```{r}
 knitr::include_graphics(here("docs", "figs", "eng_check.png"))

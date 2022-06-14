@@ -14,11 +14,63 @@ source(here("scripts", "01_helpers.R"))
 source(here("scripts", "03_load_data.R"))
 ```
 
-## K-means clustering 
+## Descriptive Analysis 
 
-Using the same functions `kmeansruns`, the ideal number of clusters were determined by iterating 1000 times with a range of 2-10 clusters in total. 
-The results suggested that the English monolingual group 
+```{r}
+no_cats_df %>% 
+  group_by(group_name) %>% 
+  summarize(mean_cats = mean(no_categories), sd_cats = sd(no_categories)) %>% 
+  knitr::kable(digits = 3, format = "pandoc")
+```
 
+```{r}
+knitr::include_graphics(here("docs", "figs", "desc_all.png"))
+```
+```{r}
+knitr::include_graphics(here("docs", "figs", "desc_asian.png"))
+```
+
+
+```{r}
+no_cats_df_b %>% 
+  group_by(group_name) %>% 
+  summarize(mean_cats = mean(no_categories), sd_cats = sd(no_categories)) %>% 
+  knitr::kable(digits = 3, format = "pandoc")
+```
+
+```{r}
+no_cats_df_desc_b = no_cats_df_b %>% 
+  group_by(group_name) %>% 
+  summarize(mean_cats = mean(no_categories), sd_cats = sd(no_categories)) 
+
+
+no_cats_df_b$group_name <- factor(no_cats_df_b$group_name, 
+                           levels = 
+                             c("non_asian_multi", 
+                               "south_asian",
+                               "se_asian",
+                               "east_asian",
+                               "eng_mono"))
+
+no_cats_df_b %>% 
+  ggplot(aes(x = no_categories, y = group_name, fill = group_name)) + geom_boxplot(outlier.shape = NA) +
+  geom_text(data = mutate_if(no_cats_df_desc_b, is.numeric, round, 2),
+            aes(label = paste0(mean_cats, " (", sd_cats, ")"), x = Inf), 
+            hjust = "inward", size = 5) + xlim(0, 20) + ylab("Group Name") + 
+  theme_minimal() + theme(legend.position = "none") +
+  scale_y_discrete(labels=c("eng_mono" = "English monolingual", 
+                            "east_asian" = "East Asian",
+                            "se_asian" = "Southeast Asian",
+                            "south_asian" = "South Asian",
+                            "non_asian_multi" = "Non-Asian Multilingual")) +
+  ggtitle("Average Number of Cateogires Created per group") +
+  scale_x_continuous(name="Number of Categories", breaks=c(0,5,10,15), limits=c(0, 20)) +
+  scale_fill_brewer(palette = "Set3") +
+    theme(text=
+            element_text(
+              size=14,
+              family="Arial")) 
+```
 
 ## English monolingual group
 ```{r}
@@ -64,7 +116,6 @@ knitr::include_graphics(here("docs", "figs", "non_multi_check.png"))
 ```{r}
 knitr::include_graphics(here("docs", "figs", "non_multi_den.png"))
 ```
-
 
 
 

@@ -64,7 +64,6 @@ freq_model = function(df)
   
   american = group_mem %>% 
     filter(lang_2 == "American")
-  american$speaker
   
   df_dist = ex %>% as.data.frame()
   
