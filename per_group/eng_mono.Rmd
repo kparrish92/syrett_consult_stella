@@ -1,0 +1,56 @@
+---
+title: "English monolingual group clusters"
+output: html_document
+date: '2022-06-09'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
+```
+
+```{r, include = FALSE}
+source(here::here("scripts", "00_libs.R"))
+source(here("scripts", "01_helpers.R"))
+source(here("scripts", "03_load_data.R"))
+```
+
+
+# Overview
+
+The following is an overview of a series of hierarchical clustering analyses for the English monolingual group. 
+First, categorizations were standardized and a differences measure in euclidean distance was computed. 
+The clusters were determined usingthe Ward d2 algorithm in a stepwise fashion. 
+
+```{r}
+knitr::include_graphics(here("docs", "figs", "eng_check.png"))
+```
+
+## 2 Clusters
+```{r fig.width=14, fig.height=10}
+ggarrange(plot_clusters(eng_mono, clusters = 2),
+          plot_clusters2(eng_mono, clusters = 2)) + ggtitle("English monolingual 2 clusters")
+```
+
+## 3 Clusters
+```{r fig.width=14, fig.height=10}
+ggarrange(plot_clusters(eng_mono, clusters = 3),
+          plot_clusters2(eng_mono, clusters = 3)) + ggtitle("English monolingual 3 clusters")
+```
+
+## 4 Clusters
+```{r fig.width=14, fig.height=10}
+ggarrange(plot_clusters(eng_mono, clusters = 4),
+          plot_clusters2(eng_mono, clusters = 4)) + ggtitle("English monolingual 4 clusters")
+```
+
+## 5 Clusters
+```{r fig.width=14, fig.height=10}
+ggarrange(plot_clusters(eng_mono, clusters = 5),
+          plot_clusters2(eng_mono, clusters = 5)) + ggtitle("English monolingual 5 clusters")
+```
+
+## 6 Clusters
+```{r fig.width=14, fig.height=10}
+ggarrange(plot_clusters(eng_mono, clusters = 6),
+          plot_clusters2(eng_mono, clusters = 6)) + ggtitle("English monolingual 6 clusters")
+```

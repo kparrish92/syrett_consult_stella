@@ -1,0 +1,101 @@
+---
+title: "Stella rough draft"
+output: html_document
+date: '2022-06-09'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
+```
+
+```{r, include = FALSE}
+source(here::here("scripts", "00_libs.R"))
+source(here("scripts", "01_helpers.R"))
+source(here("scripts", "03_load_data.R"))
+```
+
+## K-means clustering 
+
+Using the same functions `kmeansruns`, the ideal number of clusters were determined by iterating 1000 times with a range of 2-10 clusters in total. 
+The results suggested that the English monolingual group 
+
+
+## English monolingual group
+```{r}
+knitr::include_graphics(here("docs", "figs", "eng_check.png"))
+```
+
+```{r}
+knitr::include_graphics(here("docs", "figs", "eng_mono_den.png"))
+```
+
+## South asian group
+```{r}
+knitr::include_graphics(here("docs", "figs", "s_asian_check.png"))
+```
+
+```{r}
+knitr::include_graphics(here("docs", "figs", "s_asian_den.png"))
+```
+
+## Southeast asian group
+```{r}
+knitr::include_graphics(here("docs", "figs", "se_asian_check.png"))
+```
+
+```{r}
+knitr::include_graphics(here("docs", "figs", "se_asian_den.png"))
+```
+
+## East asian group
+```{r}
+knitr::include_graphics(here("docs", "figs", "e_asian_check.png"))
+```
+```{r}
+knitr::include_graphics(here("docs", "figs", "e_asian_den.png"))
+```
+
+
+## Other multilingual group
+```{r}
+knitr::include_graphics(here("docs", "figs", "non_multi_check.png"))
+```
+
+```{r}
+knitr::include_graphics(here("docs", "figs", "non_multi_den.png"))
+```
+
+
+
+
+## Appendix 
+
+### Eng mono
+```{r fig.width=14, fig.height=10}
+ggarrange(plot_clusters(eng_mono, clusters = 5),
+          plot_clusters2(eng_mono, clusters = 5))
+```
+
+### S asian
+```{r fig.width=14, fig.height=10}
+ggarrange(plot_clusters(s_asian, clusters = 4),
+          plot_clusters2(s_asian, clusters = 4))
+```
+
+### SE asian 
+```{r fig.width=14, fig.height=10}
+ggarrange(plot_clusters(se_asian, clusters = 4),
+          plot_clusters2(se_asian, clusters = 4))
+```
+
+### E asian 
+```{r fig.width=14, fig.height=10}
+ggarrange(plot_clusters(e_asian, clusters = 4),
+          plot_clusters2(e_asian, clusters = 4))
+```
+
+### Other  
+```{r fig.width=14, fig.height=10}
+ggarrange(plot_clusters(non_multi, clusters = 4),
+          plot_clusters2(non_multi, clusters = 4))
+```

@@ -1,0 +1,8 @@
+library(here)
+library(tidyverse)
+library(cluster) 
+library(factoextra)
+library(dendextend) 
+library(fpc)
+library(gridExtra)
+library(ggpubr)
