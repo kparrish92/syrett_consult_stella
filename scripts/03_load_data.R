@@ -14,20 +14,27 @@ rownames(se_asian) <- se_asian$speaker
 rownames(non_multi) <- non_multi$speaker
 
 eng_mono = eng_mono %>% 
-  select(-speaker)
+  dplyr::select(-speaker)
+
 e_asian = e_asian %>% 
-  select(-speaker)
+  dplyr::select(-speaker)
+
 s_asian = s_asian %>% 
-  select(-speaker)
+  dplyr::select(-speaker)
+
 se_asian = se_asian %>% 
-  select(-speaker)
+  dplyr::select(-speaker)
+
 non_multi = non_multi %>% 
-  select(-speaker)
+  dplyr::select(-speaker)
 
 
 no_cats_df = read.csv(here("data", "tidy", "desc_all.csv"))
 
 no_cats_df_b = read.csv(here("data", "tidy", "desc_asian.csv"))
+
+
+mod = read_rds(here("data", "models", "mod_b.rds"))
 
 # Run with 3, 5, and 12? 
 

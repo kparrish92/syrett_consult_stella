@@ -1,7 +1,6 @@
 source(here::here("scripts", "00_libs.R"))
 
 
-
 plot_needed_clusters = function(df)
 {
   
@@ -93,4 +92,216 @@ freq_model = function(df)
 }
 
 # language group = am eng, other eng, se asian, e asian, s asian
+ 
+error_rate_2 = function(df)
+{
+  df_lang_cats = read.csv(here("data", "data_v.csv"), header=T, na.strings=c("")) %>% 
+    select(speaker, lang_1, lang_2, lang_3) %>% 
+    filter(!is.na(speaker))
+  
+  df = df %>% 
+    mutate(speaker = rownames(df)) %>% 
+    left_join(df_lang_cats, by = "speaker")
+  
+  cols = colnames(df)
+  
+  nruns = ncol(df) - 3
+  
+  #i = 2
+  #thisrun = 2
+  
+  # 2 cat error rate 
+  
+  error_2_df = matrix()
+  participant = matrix()
+  
+  for (i in 1:nruns) {
+    
+    df_2 = df %>% 
+      rename("col" = cols[i])
+    
+    hope = df_2 %>% 
+      group_by(lang_1, col) %>% 
+      summarize(n = n()) %>% 
+      group_by(col) %>% 
+      filter(n()>1 | n == 1)
+    
+    error_df = matrix()
+    
+    for (thisrun in 1:nrow(unique(hope[,2]))) {
+      
+      rundf = unique(hope[,2])
+      hope2 = hope %>% filter(col == rundf[thisrun,1])
+      
+      error_df[thisrun] = ifelse(nrow(hope2) > 1, sum(hope2$n) - max(hope2$n),
+                                 ifelse(nrow(hope2)==1, 1,
+                                        0))        
+      
+      
+    }
+    
+    error_2_df[i] = sum(error_df)
+    participant[i] = cols[i]
+    x = cbind(error_2_df, participant)
+  }
+  return(as.data.frame(x)) 
+}
+
+error_rate_5 = function(df)
+{
+  df_lang_cats = read.csv(here("data", "data_v.csv"), header=T, na.strings=c("")) %>% 
+    select(speaker, lang_1, lang_2, lang_3) %>% 
+    filter(!is.na(speaker))
+  
+  df = df %>% 
+    mutate(speaker = rownames(df)) %>% 
+    left_join(df_lang_cats, by = "speaker")
+  
+  cols = colnames(df)
+  
+  nruns = ncol(df) - 3
+  
+  #i = 2
+  #thisrun = 2
+  
+  # 2 cat error rate 
+  
+  error_2_df = matrix()
+  participant = matrix()
+  
+  for (i in 1:nruns) {
+    
+    df_2 = df %>% 
+      rename("col" = cols[i])
+    
+    hope = df_2 %>% 
+      group_by(lang_2, col) %>% 
+      summarize(n = n()) %>% 
+      group_by(col) %>% 
+      filter(n()>1 | n == 1)
+    
+    error_df = matrix()
+    
+    for (thisrun in 1:nrow(unique(hope[,2]))) {
+      
+      rundf = unique(hope[,2])
+      hope2 = hope %>% filter(col == rundf[thisrun,1])
+      
+      error_df[thisrun] = ifelse(nrow(hope2) > 1, sum(hope2$n) - max(hope2$n),
+                                 ifelse(nrow(hope2)==1, 1,
+                                        0))        
+      
+      
+    }
+    
+    error_2_df[i] = sum(error_df)
+    participant[i] = cols[i]
+    x = cbind(error_2_df, participant)
+  }
+  return(as.data.frame(x)) 
+}
+
+error_rate_15 = function(df)
+{
+  df_lang_cats = read.csv(here("data", "data_v.csv"), header=T, na.strings=c("")) %>% 
+    select(speaker, lang_1, lang_2, lang_3) %>% 
+    filter(!is.na(speaker))
+  
+  df = df %>% 
+    mutate(speaker = rownames(df)) %>% 
+    left_join(df_lang_cats, by = "speaker")
+  
+  cols = colnames(df)
+  
+  nruns = ncol(df) - 3
+  
+  #i = 2
+  #thisrun = 2
+  
+  # 2 cat error rate 
+  
+  error_2_df = matrix()
+  participant = matrix()
+  
+  for (i in 1:nruns) {
+    
+    df_2 = df %>% 
+      rename("col" = cols[i])
+    
+    hope = df_2 %>% 
+      group_by(lang_3, col) %>% 
+      summarize(n = n()) %>% 
+      group_by(col) %>% 
+      filter(n()>1 | n == 1)
+    
+    error_df = matrix()
+    
+    for (thisrun in 1:nrow(unique(hope[,2]))) {
+      
+      rundf = unique(hope[,2])
+      hope2 = hope %>% filter(col == rundf[thisrun,1])
+      
+      error_df[thisrun] = ifelse(nrow(hope2) > 1, sum(hope2$n) - max(hope2$n),
+                                 ifelse(nrow(hope2)==1, 1,
+                                        0))        
+      
+      
+    }
+    
+    error_2_df[i] = sum(error_df)
+    participant[i] = cols[i]
+    x = cbind(error_2_df, participant)
+  }
+  return(as.data.frame(x)) 
+}
+
+
+e_dist = function(df, x1, x2, y1, y2)
+{
+  d = sqrt((x1 - x2)^2  + (y1 - y2)^2)
+  return(d)}
+
+
+
+mds_plot = function(df)
+{
+  mydata = df
+  d <- dist(mydata) # euclidean distances between the rows
+  fit <- cmdscale(d,eig=TRUE, k=2) # k is the number of dim
+  
+  
+  group_mem = read.csv(here("data", "data_v.csv"), header=T, na.strings=c("")) %>% 
+    select(speaker, lang_1, lang_2, lang_3) %>% 
+    filter(!is.na(speaker))
+  
+  x <- fit$points[,1]
+  y <- fit$points[,2]
+  data = data.frame(x,y)
+  
+  data$speaker = rownames(data)
+  
+  data = data %>% 
+    left_join(group_mem, by = "speaker")
+  
+  means = data %>% 
+    group_by(lang_2) %>% 
+    summarize(x.2 = mean(x), y.2 = mean(y))
+  
+  e_dist = function(df, x1, x2, y1, y2)
+  {
+    d = sqrt((x1 - x2)^2  + (y1 - y2)^2)
+    return(d)}
+  
+  
+  final_df = left_join(data, means) %>% 
+    mutate(dist_from_center = e_dist(x1 = x, x2 = x.2, y1 = y, y2 = y.2))
+  
+  
+  p = ggplot(data, aes(x, y, color = lang_2)) +
+    geom_point(size = 1) + stat_ellipse(level = .8) + theme_minimal() + 
+    ylab("Dimension 1") +
+    xlab("Dimension 2") +
+    labs(color = "Language Group") 
+  return(final_df)
+}
 

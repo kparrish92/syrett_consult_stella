@@ -42,8 +42,34 @@ plot_clusters(non_multi, clusters = 5) +
 
 
 
+ex_df_eng = hcut(eng_mono, k = 4) 
+
+plot_data = ex_df_eng$data
+
+pca <- stats::prcomp(plot_data, scale = FALSE, center = FALSE)
+ind <- facto_summarize(pca, element = "ind", result = "coord")
+
+ind$name
+ind %>% 
+  ggplot(aes(x = Dim.1, y = Dim.2)) + geom_text(label = name)
+
+
+ex_df_eng$cluster
+ex_df_eng$height
+
+
+ex_df_eng$dist.method
+ex_df_eng$order
+ex_df_eng$labels
+
+eng_mono_t = t(eng_mono)
+
+
 ggarrange(plot_clusters(eng_mono, clusters = 4),
           plot_clusters2(eng_mono, clusters = 4))
+
+ggarrange(plot_clusters(eng_mono_t, clusters = 4),
+          plot_clusters2(eng_mono_t, clusters = 4))
 
 
 no_cats_df %>% 
