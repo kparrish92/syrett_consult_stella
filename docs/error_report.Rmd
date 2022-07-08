@@ -1,5 +1,5 @@
 ---
-title: "anaylsis"
+title: "Free Classification Task Analysis"
 output: html_document
 date: '2022-06-09'
 ---
@@ -15,26 +15,25 @@ source(here("scripts", "03_load_data.R"))
 
 ## Overview 
 
-What should be done with NA data? There are a total of 27 participants whose data contains at least one n/a. 
-I've replaced those n/as with group 0 at the moment, but other solutions could be implemented and all analyses could be updated by simply re-running the scripts used to create this document and all the plots. 
+This document details the analyses of the free classification task given to a total of `r nrow(t) - 4` participants divided into 5 groups. 
+The groups included a total English monolinguals (n = `r nrow(t(eng_mono))`), East Asian multilingual speakers (n = `r nrow(t(e_asian))`), Southeast Asian multilingual speakers (n = 
+`r nrow(t(se_asian))`), South Asian speakers (n = `r nrow(t(s_asian))`), and multilingual speakers of other languages (n = `r nrow(t(non_multi))`).
+
 
 ## Statistical Analysis 
 
-I've written a brief results section below, in which I have included the most relevant information for now. 
-If this seems like the analysis you would like to include, I will write the needed "statistical analysis" section and other small details about the modelling choices that would be necessary for a paper.
-
-### Total Categories created
-
-Total categories were calculated by the unique groups made by each participant.
-Mean total categories were calculated for each group. 
-The figure below shows these averages, with the standard deviation in parentheses. 
-
-```{r}
-# boxplot 
-knitr::include_graphics(here("docs", "figs", "desc_all.png"))
-```
-
-### Within-category analysis  
+Several statistical analyses were carried out to determine whether language background has an impact on the processing of accented English.
+First, descriptive statistics are reported which show the total number of categories created by each of the 5 groups given the same 45 speakers. 
+Next, to determine how appropriate or correct these categories were, 3 error rates were calculated for each group: 2 category creation, 5 category creation and 15 category creation. 
+2 category creation error rate measured how often participants inappropriately categorized an Asian language category with an English language category and vice versa.
+5 category error rate measured how often participants inappropriately categorized any of the 5 categories (English, International English, East Asian, South Asian or Southeast Asian) with another category.
+Finally, 15 category error rate measured how often the participants inappropriately categorized any of the 15 language categories with a different language.
+Single categories also counted as an error, since the minimum category number would be 3 (of the same language).
+Thus, the maximum number of errors was 45, and would occur if a participant created 45 single categories.
+The error rate in each case was the total number of errors divided by the maximum number of errors (45). 
+The overall category was whichever of the categories occurred the most frequently within a given category.
+In the event that there were an equal number of categories to determine overall category, this did not impact the total number of errors and the overall category label was arbitrary. 
+For example, if 4 languages were groups in a category, and 2 of them were American English and the other 2 were East Asian, this would be counted as two errors regardless of the overall category label. 
 
 In addition to the total number of categories, the closeness of those categories could provide evidence of between-group differences.
 This analysis make use of multidimensional scaling analysis (MDS) in which a (dis)similarity matrix allows for the visualization of categorization differences between groups to be examined in a two-dimensional space.
@@ -49,43 +48,81 @@ The figure below shows the MDS for each group.
 The color of points were assigned based on the actual category of the language, which was unknown to the participant. 
 Here, a smaller ellipse/points being closer together suggests that a particular language group is being categorized as more similarly.
 
-```{r}
-knitr::include_graphics(here("data",                                                        "plots", "mds.png"))
-```
-
-A Bayesian multilevel regression model was run to determine whether there were differences between groups and conditions in terms of how concentrated a given category was.
+Finally, a Bayesian multilevel regression model was run to determine whether there were differences between groups and conditions in terms of how concentrated a given category was.
 The outcome variable of the model was the euclidian distance of a point from its centroid, where a smaller euclidian distance would suggest an overall tighter/more consistent category.
 The fixed effect predictors included group (5 levels, English monolingual, East Asian, South Asian, Southeast Asian, and Non-asian Multilingual) and language group (5 levels, American English, International English, East Asian, Southeast Asian, East Asian), with a random intercept for individual language. 
 The model included the default brms priors - Student's T distribution with 3 degrees of freedom.
 The model was run using with 4000 iterations of Hamiltonian Monte-Carlo sampling (1000 warm up), across 4 chains and 8 processing cores.
+
+## Results
+
+### Total Categories created
+
+Total categories were calculated by the unique groups made by each participant.
+Mean total categories were calculated for each group. 
+The figure below shows these averages, with the standard deviation in parentheses. 
+
+```{r}
+# boxplot 
+knitr::include_graphics(here("docs", "figs", "desc_all.png"))
+```
+
+### Error Rates 
+
+The figure below shows the error rates by each group in the 2, 5 and 15 error categories. 
+The tables also show 2, 5 and 15 error rates in writing and correspond to the same values in the figure.
+
+```{r, 'error', echo=FALSE, fig.cap="Error rates by each group"}
+knitr::include_graphics(here("data",                                                        "plots", "error_plot.png"))
+```
+
+```{r}
+error_rates %>% 
+  filter(grouping == "2 category") %>% 
+  mutate("Error rate (sd)" = paste0(round(error_r, digits = 3), " (", round(error_r_sd, digits = 3), ")")) %>% 
+  dplyr::select(group, `Error rate (sd)`) %>% 
+  knitr::kable(format = "pandoc", caption = "2 category error rate per group") %>%
+  kable_styling(full_width = F)
+```
+
+```{r}
+error_rates %>% 
+  filter(grouping == "5 category") %>% 
+  mutate("Error rate (sd)" = paste0(round(error_r, digits = 3), " (", round(error_r_sd, digits = 3), ")")) %>% 
+  dplyr::select(group, `Error rate (sd)`) %>% 
+  knitr::kable(format = "pandoc", caption = "5 category error rate per group") %>%
+  kable_styling(full_width = F)
+```
+
+```{r}
+error_rates %>% 
+  filter(grouping == "15 category") %>% 
+  mutate("Error rate (sd)" = paste0(round(error_r, digits = 3), " (", round(error_r_sd, digits = 3), ")")) %>% 
+  dplyr::select(group, `Error rate (sd)`) %>% 
+  knitr::kable(format = "pandoc", caption = "15 category error rate per group") %>%
+  kable_styling(full_width = F)
+```
+
+
+### MDS
+
+```{r}
+knitr::include_graphics(here("data",                                                        "plots", "mds.png"))
+```
+
+### The Bayesian Model
 
 The results of the model are shown below, where the `conditional_effects` function was used to plot the estimate of each group for each language. 
 Additional model details, including a forest plot, model table, and detailed model significance table are included in a section here called "appendix".
 
 ```{r}
 knitr::include_graphics(here("data",                                                        "plots", "mod_plot.png"))
-
 ```
 
-### Error-rate analysis 
 
-Error rate was calculated in three categories: 2 category creation, 5 category creation and 15 category creation. 
-2 category creation error rate measured how often participants inappropriately categorized an Asian language category with an English language category and vice versa.
-5 category error rate measured how often participants inappropriately categorized any of the 5 categories (English, International English, East Asian, South Asian or Southeast Asian) with another category.
-Finally, 15 category error rate measured how often the participants inappropriately categorized any of the 15 language categories with a different language.
-Single categories also counted as an error, since the minimum category number would be 3 (of the same language).
-Thus, the maximum number of errors was 45, and would occur if a participant created 45 single categories.
-The error rate in each case was the total number of errors divided by the maximum number of errors (45). 
-The overall category was whichever of the categories occurred the most frequently within a given category.
-In the event that there were an equal number of categories to determine overall category, this did not impact the total number of errors and the overall category label was arbitrary. 
-For example, if 4 languages were groups in a category, and 2 of them were American English and the other 2 were East Asian, this would be counted as two errors regardless of the overall category label. 
-This figure below shows the error rates by each group in the 2, 5 and 15 error categories. 
+## Appendix Items 
 
-```{r}
-knitr::include_graphics(here("data",                                                        "plots", "error_plot.png"))
-```
-
-### Dump Category? 
+### Dump Category
 
 This boxplot shows the the number of members in the category of each participant that contained the most members, where the mean and standard deviation of the number of members in the largest group per group is included on the right side of the plot.
 Interestingly, the English monolinguals had the least number of speakers on average in their largest group, while also creating the most groups on average. 
@@ -93,8 +130,6 @@ Interestingly, the English monolinguals had the least number of speakers on aver
 ```{r}
 knitr::include_graphics(here("docs",                                                        "figs", "max_mems.png"))
 ```
-
-## Appendix Items 
 
 The following items show the full Bayesian model in a forest plot, a table showing the parameter estimates and a more detailed table including information related to the probability of an effect being positive/negative (probability of direction; pd), the probability of a "significant" (non-zero) effect (ps), and the Highest Density interval (including the mean, median and upper and lower bounds of 95% of the most probable parameter estimates).
 
@@ -120,3 +155,34 @@ describe_posterior(
   knitr::kable(row.names = FALSE)
 
 ``` 
+
+
+### Updates:
+
+Here are the new plots:
+
+Individual plots of each parameter estimate from the model with numerical values - these show the same estimates from the complete conditional effects plot, but are re-organized and presented per group, along with the (numerical) parameter estimates themselves with the 95% HDI.
+
+
+```{r}
+plot_ind_est("South")
+```
+
+```{r}
+plot_ind_est("East")
+```
+
+```{r}
+plot_ind_est("South East")
+```
+
+```{r}
+plot_ind_est("American")
+```
+
+```{r}
+plot_ind_est("International ")
+```
+
+
+## Subgrouping

@@ -58,7 +58,7 @@ freq_model = function(df)
   ex = dist(df) %>% as.matrix()
   
   group_mem = read.csv(here("data", "data_v.csv"), header=T, na.strings=c("")) %>% 
-    select(speaker, lang_1, lang_2) %>% 
+    dplyr::select(speaker, lang_1, lang_2) %>% 
     filter(!is.na(speaker))
   
   american = group_mem %>% 
@@ -204,7 +204,7 @@ error_rate_5 = function(df)
 error_rate_15 = function(df)
 {
   df_lang_cats = read.csv(here("data", "data_v.csv"), header=T, na.strings=c("")) %>% 
-    select(speaker, lang_1, lang_2, lang_3) %>% 
+    dplyr::select(speaker, lang_1, lang_2, lang_3) %>% 
     filter(!is.na(speaker))
   
   df = df %>% 
@@ -271,7 +271,7 @@ mds_plot = function(df)
   
   
   group_mem = read.csv(here("data", "data_v.csv"), header=T, na.strings=c("")) %>% 
-    select(speaker, lang_1, lang_2, lang_3) %>% 
+    dplyr::select(speaker, lang_1, lang_2, lang_3) %>% 
     filter(!is.na(speaker))
   
   x <- fit$points[,1]
@@ -285,6 +285,79 @@ mds_plot = function(df)
   
   means = data %>% 
     group_by(lang_2) %>% 
+    summarize(x.2 = mean(x), y.2 = mean(y))
+  
+  e_dist = function(df, x1, x2, y1, y2)
+  {
+    d = sqrt((x1 - x2)^2  + (y1 - y2)^2)
+    return(d)}
+  
+  
+  final_df = left_join(data, means) %>% 
+    mutate(dist_from_center = e_dist(x1 = x, x2 = x.2, y1 = y, y2 = y.2))
+  
+  
+  p = ggplot(data, aes(x, y, color = lang_2)) +
+    geom_point(size = 1) + stat_ellipse(level = .8) + theme_minimal() + 
+    ylab("Dimension 1") +
+    xlab("Dimension 2") +
+    labs(color = "Language Group") 
+  return(final_df)
+}
+
+
+plot_ind_est = function(eff)
+{
+  cbPalette <- c("#999999", "#E69F00", "#56B4E9",
+                 "#009E73", "#F0E442", "#0072B2", 
+                 "#D55E00", "#CC79A7")
+  fixef_df_param = re_plot_condef %>% 
+    filter(effect2__ == eff)
+  
+  plot = re_plot_condef %>% 
+    filter(effect2__ == eff) %>% 
+    ggplot(aes(y = reorder(effect1__, +estimate__), x = estimate__, fill = group, 
+               shape = group)) +
+    geom_pointrange(aes(xmin = lower__, xmax = upper__), 
+                    shape = 21, 
+                    position = position_dodge(width = .6)) + 
+    theme_minimal() +
+    theme(text=element_text(size=10,  family="Times")) +
+    xlim(-1,11) +
+    theme(legend.position = "none", legend.text=element_text(size=5),
+          legend.title=element_text(size=5)) +
+    xlab("Language Group") + ylab("Estimate") +
+    scale_fill_manual(values=cbPalette) + 
+    geom_text(data = mutate_if(fixef_df_param, is.numeric, round, 2),
+              aes(label = paste0(estimate__, " [", lower__, " - ", upper__, "]"), x = Inf), 
+              hjust = "inward", size = 2.5, family="Times") +
+    ggtitle(paste("Parameter estimates for distance from the centroid for", eff))
+  return(plot)
+}
+
+
+mds_plot_15 = function(df)
+{
+  mydata = df
+  d <- dist(mydata) # euclidean distances between the rows
+  fit <- cmdscale(d,eig=TRUE, k=2) # k is the number of dim
+  
+  
+  group_mem = read.csv(here("data", "data_v.csv"), header=T, na.strings=c("")) %>% 
+    dplyr::select(speaker, lang_1, lang_2, lang_3) %>% 
+    filter(!is.na(speaker))
+  
+  x <- fit$points[,1]
+  y <- fit$points[,2]
+  data = data.frame(x,y)
+  
+  data$speaker = rownames(data)
+  
+  data = data %>% 
+    left_join(group_mem, by = "speaker")
+  
+  means = data %>% 
+    group_by(lang_3) %>% 
     summarize(x.2 = mean(x), y.2 = mean(y))
   
   e_dist = function(df, x1, x2, y1, y2)

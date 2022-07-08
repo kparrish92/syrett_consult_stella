@@ -1,3 +1,7 @@
+source(here::here("scripts", "00_libs.R"))
+source(here("scripts", "01_helpers.R"))
+source(here("scripts", "03_load_data.R"))
+
 # Visualize error rate per group 
 
 
@@ -50,9 +54,11 @@ df_c %>%
   geom_pointrange(aes(ymin = error_r + error_r_sd, ymax = error_r - error_r_sd), 
                   shape = 21, 
                   position = position_dodge(width = .6)) +
-  theme_minimal() + scale_fill_brewer(palette = "Set3") + ylab("Error rate") +
+  theme_minimal() + scale_fill_manual(values=cbPalette) + ylab("Error rate") +
   xlab("Number of categories considered correct") + ggsave(here("data",
                                                                 "plots", "error_plot.png"))
 
+df_c %>% 
+  write.csv(here("data", "tidy", "error_rates.csv"))
 # flip
 

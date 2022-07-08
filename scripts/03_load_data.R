@@ -1,4 +1,3 @@
-
 # read tidy dfs 
 eng_mono =  read.csv(here("data", "tidy", "eng_mono_df.csv")) 
 e_asian = read.csv(here("data", "tidy", "east_asian_df.csv")) 
@@ -56,3 +55,15 @@ mod = read_rds(here("data", "models", "mod_b.rds"))
 #get_best_k(s_asian)  
 #get_best_k(se_asian)   
 #get_best_k(non_multi) 
+
+mod = readRDS(here("data", "models", "mod_b.rds"))
+
+brm_df = conditional_effects(mod)
+
+re_plot_condef = as.data.frame(brm_df[["group:lang_2"]])
+
+error_rates = read.csv(here("data", "tidy", "error_rates.csv"))
+
+
+
+t = read.csv(here("data", "tidy", "max_no_cats.csv"))

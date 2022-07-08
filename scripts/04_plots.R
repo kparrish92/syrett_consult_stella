@@ -102,8 +102,8 @@ no_cats_df %>%
                             "south_asian" = "South Asian",
                             "non_asian_multi" = "Non-Asian Multilingual")) +
   ggtitle("Average Number of Categories Created per group") +
+  scale_fill_manual(values=cbPalette) +
   scale_x_continuous(name="Number of Categories", breaks=c(0,5,10,15), limits=c(0, 20)) +
-  scale_fill_brewer(palette = "Set3") +
   theme(text=
           element_text(
             size=14,

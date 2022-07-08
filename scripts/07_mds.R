@@ -1,4 +1,8 @@
-df = eng_mono
+
+source(here::here("scripts", "00_libs.R"))
+source(here("scripts", "01_helpers.R"))
+source(here("scripts", "03_load_data.R"))
+
 
 p1 = mds_plot(eng_mono) %>% 
   mutate(group = "English mono")
@@ -17,6 +21,9 @@ p5 = mds_plot(non_multi) %>%
 
 plot_df = rbind(p1,p2,p3,p4,p5)
 
+cbPalette <- c("#999999", "#E69F00", "#56B4E9",
+               "#009E73", "#F0E442", "#0072B2", 
+               "#D55E00", "#CC79A7")
 
 plot_df %>%
   ggplot(aes(x, y, color = lang_2)) +
@@ -26,6 +33,7 @@ plot_df %>%
   ylab("Dimension 1") +
   xlab("Dimension 2") +
   labs(color = "Language Group") +
+  scale_color_manual(values=cbPalette) +
   theme(legend.position = "bottom", legend.text=element_text(size=5),
         legend.title=element_text(size=5)) + facet_wrap(~group, nrow = 2) +
   ggsave(here("data",
@@ -37,33 +45,6 @@ plot_df %>%
 
 # d =√[(x2 – x1)2 + (y2 – y1)2]
 
-p1 = df
-
-this = p1 %>% 
-  filter(lang_2 == "South East")
-
-this$x.2 = mean(this$x)
-this$y.2 = mean(this$y)
-
-d = sqrt((this$x[1] - this$x.2[1])^2  + (this$y[1] - this$y.2[1])^2)
-
-
-
-
-new_df = this %>% 
-  mutate(dist_from_center = e_dist(x1 = x, x2 = x.2, y1 = y, y2 = y.2))
-
-
-
-ggscatter(p1, x = x, y = y)
-ggscatter(p1, x = x, y = y, 
-          label = "speaker",
-          color = "group",
-          palette = "jco",
-          size = 1, 
-          ellipse = TRUE,
-          ellipse.type = "convex",
-          repel = TRUE)
 
 
 mds <- eng_mono %>%
@@ -117,6 +98,7 @@ re_plot_condef %>%
   geom_pointrange(aes(ymin = lower__, ymax = upper__), 
                   shape = 21, 
                   position = position_dodge(width = .6)) + 
+  scale_fill_manual(values=cbPalette, name = "Language type") + 
   theme_minimal() +
   xlab("Language Group") + ylab("Estimate") +
   ggsave(here("data",

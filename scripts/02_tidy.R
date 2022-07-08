@@ -19,32 +19,33 @@ df_speakers  <- df_raw %>%
 
 df_raw <- df_raw %>% 
   dplyr::select(7:200) %>%
-  mutate_if(is.character, str_trim)
+  mutate_if(is.character, str_trim) 
 
-df_raw[ df_raw == "n/a" ] <- 0
-df_raw[ is.na(df_raw) ] <- 0
+df_raw[ df_raw == "n/a" ] <- NA
+#df_raw[ is.na(df_raw) ] <- 0
 
 df_raw = df_raw %>% 
-  mutate_if(is.character, as.numeric) %>% 
   cbind(df_speakers) %>% 
   filter(!is.na(speaker))
 
 df_raw$speaker
 
-df_new = df_raw[ , colSums(is.na(df_raw)) == 0] # What to do with n/a data? 
+# df_new = df_raw[ , colSums(is.na(df_raw)) == 0] # What to do with n/a data? 
 # There are 28 participants who have n/a data that interferes with the analysis
 # We could either remove them or somehow recode the n/a data. 
 # so that it works
-rownames(df_new) <- df_new$speaker
+rownames(df_raw) <- df_raw$speaker
 
-df_fix = select_if(df_new, is.character) # get/check speakers with n/as
+#df_fix = select_if(df_new, is.character) # get/check speakers with n/as
 
-df_int = select_if(df_new, is.double)
+#df_int = select_if(df_new, is.double)
+
+#df_int = df_raw
 # There are 7 additional participants who have data that is coded with 
 # spaces or something similar - I'll work to recode this data (remove spaces etc)
 # so that it works
 
-df_t = df_int %>% 
+df_t = df_raw %>% 
   t() %>%
   as.data.frame() %>% 
   rownames_to_column("participant") %>% 
@@ -137,7 +138,7 @@ new_df = df_int
 container = matrix(nrow = ncol(new_df), ncol = 2)
 
 for(i in 1:ncol(new_df)) {       # for-loop over columns
-  container[i, 1] <- length(unique(new_df[ , i]))
+  container[i, 1] <- length(unique(na.omit(new_df[ , i])))
   container[i, 2] <- colnames(new_df[i])
 }
 
@@ -227,11 +228,13 @@ no_cats_df_b %>%
 
 
 
-container_max = matrix(nrow = ncol(df_int), ncol = 2)
+container_max = matrix(nrow = ncol(df_raw), ncol = 2)
 
-for(i in 1:ncol(df_int)) {       # for-loop over columns
+cols = colnames(df_raw) 
+
+for(i in 1:ncol(df_raw)) {       # for-loop over columns
   
-df_int2 = df_int %>% 
+df_int2 = df_raw %>% 
   rename("col" = cols[i])
   
   get_max = df_int2 %>%
@@ -243,6 +246,8 @@ df_int2 = df_int %>%
   container_max[i, 1] <- m
   container_max[i, 2] <- cols[i]
 }
+
+groups$Participant = as.integer(groups$Participant)
 
 t = container_max %>% 
   as.data.frame() %>% 
@@ -268,6 +273,8 @@ t_desc = t %>%
   group_by(group_name) %>% 
   summarize(mean_cats = mean(V1), sd_cats = sd(V1)) 
 
+t %>% 
+  write.csv(here("data", "tidy", "max_no_cats.csv"))
 
 t %>% 
   ggplot(aes(x = as.numeric(V1), y = as.factor(group_name), fill = as.factor(group_name))) + 
@@ -293,5 +300,9 @@ t %>%
           aes(label = paste0(mean_cats, " (", sd_cats, ")"), x = Inf), 
           hjust = "inward", size = 3) + 
   ggsave(here("docs", "figs", "max_mems.png"), width = 8, height= 7)
+
+
+### remove zeros at category 
+
 
 
