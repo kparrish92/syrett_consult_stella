@@ -14,21 +14,42 @@ source(here("scripts", "01_helpers.R"))
 df_raw = read.csv(here("data", "data_v.csv"), header=T, na.strings=c(""))
 groups = read.csv(here("data", "groups.csv"), header=T, na.strings=c(""))
 
+df_speakers_eng <- df_raw %>% 
+  filter(lang_1 == "English") %>% 
+  dplyr::select(speaker, lang_1, lang_2, lang_3) 
+
+
+df_raw_eng = read.csv(here("data", "data_v.csv"), header=T, na.strings=c("")) %>% 
+  filter(lang_1 == "English") %>% 
+  dplyr::select(7:200) %>%
+  mutate_if(is.character, str_trim) %>%
+  cbind(df_speakers_eng) %>% 
+  filter(!is.na(speaker))
+
+df_raw_eng[ df_raw_eng == "n/a" ] <- NA
+
 df_speakers  <- df_raw %>% 
   dplyr::select(speaker, lang_1, lang_2, lang_3) 
+
 
 df_raw <- df_raw %>% 
   dplyr::select(7:200) %>%
   mutate_if(is.character, str_trim) 
 
-df_raw[ df_raw == "n/a" ] <- NA
+
+#df_raw[ df_raw == "n/a" ] <- NA
 #df_raw[ is.na(df_raw) ] <- 0
 
 df_raw = df_raw %>% 
   cbind(df_speakers) %>% 
   filter(!is.na(speaker))
 
-df_raw$speaker
+
+df_raw_eng = df_raw_eng %>% 
+  cbind(df_speakers) %>% 
+  filter(!is.na(speaker))
+
+df_raw_eng$speaker
 
 # df_new = df_raw[ , colSums(is.na(df_raw)) == 0] # What to do with n/a data? 
 # There are 28 participants who have n/a data that interferes with the analysis

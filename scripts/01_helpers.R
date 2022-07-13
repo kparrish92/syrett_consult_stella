@@ -378,3 +378,45 @@ mds_plot_15 = function(df)
   return(final_df)
 }
 
+
+
+
+mds_plot_1 = function(df)
+{
+  mydata = df
+  d <- dist(mydata) # euclidean distances between the rows
+  fit <- cmdscale(d,eig=TRUE, k=1) # k is the number of dim
+  
+  
+  group_mem = read.csv(here("data", "data_v.csv"), header=T, na.strings=c("")) %>% 
+    dplyr::select(speaker, lang_1, lang_2, lang_3) %>% 
+    filter(!is.na(speaker))
+  
+  x <- fit$points[,1]
+  data = data.frame(x)
+  
+  data$speaker = rownames(data)
+  
+  data = data %>% 
+    left_join(group_mem, by = "speaker")
+  
+  means = data %>% 
+    group_by(lang_3) %>% 
+    summarize(x.2 = mean(x))
+  
+  e_dist = function(df, x1, x2, y1, y2)
+  {
+    d = sqrt((x1 - x2)^2  + (y1 - y2)^2)
+    return(d)}
+  
+  
+  final_df = left_join(data, means) 
+  
+  p = ggplot(data, aes(x, y, color = lang_2)) +
+    geom_point(size = 1) + stat_ellipse(level = .8) + theme_minimal() + 
+    ylab("Dimension 1") +
+    xlab("Dimension 2") +
+    labs(color = "Language Group") 
+  return(final_df)
+}
+

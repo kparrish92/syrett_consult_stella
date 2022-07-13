@@ -80,6 +80,51 @@ plot_df %>%
   ggsave(here("data",
               "plots", "mds.png"))
 
+plot_df %>%
+  filter(group == "English mono") %>% 
+  filter(lang_1 == "English") %>% 
+  ggplot(aes(x, y, color = lang_3, label = lang_3)) +
+  geom_point(size = 1, alpha = .6) + 
+  geom_text(size = 2, hjust = -.1) +
+  stat_ellipse(aes(x, y, color = lang_2), level = .8, linetype = "dashed") +
+  theme_minimal() + 
+  ylab("Dimension 1") +
+  xlab("Dimension 2") +
+  labs(color = "Language Group") +
+  scale_color_manual(values=cbPalette) +
+  theme(legend.position = "bottom", legend.text=element_text(size=5),
+        legend.title=element_text(size=5))
+
+
+
+plot_df %>%
+  filter(lang_1 == "English") %>% 
+  ggplot(aes(x, y, color = lang_3, label = lang_3)) +
+  geom_point(size = 1, alpha = .6) + 
+  geom_text(size = 2, hjust = -.1, check_overlap = TRUE) +
+  stat_ellipse(aes(x, y, color = lang_2), level = .8, linetype = "dashed") +
+  theme_minimal() + 
+  ylab("Dimension 1") +
+  xlab("Dimension 2") +
+  labs(color = "Language Group") +
+  scale_color_manual(values=cbPalette) +
+  theme(legend.position = "none", legend.text=element_text(size=5),
+        legend.title=element_text(size=5)) + facet_wrap(~group, nrow = 2)
+
+plot_df %>%
+  filter(lang_1 == "English") %>% 
+  ggplot(aes(x, y, color = lang_3, label = lang_3)) +
+  geom_point(size = 1, alpha = .6) + 
+  geom_text(size = 2, hjust = -.1, check_overlap = TRUE) +
+  stat_ellipse(aes(x, y, color = lang_2), level = .8, linetype = "dashed") +
+  theme_minimal() + 
+  ylab("Dimension 1") +
+  xlab("Dimension 2") +
+  labs(color = "Language Group") +
+  scale_color_manual(values=cbPalette) +
+  theme(legend.position = "none", legend.text=element_text(size=5),
+        legend.title=element_text(size=5)) + facet_wrap(~group, nrow = 2)
+
 ## Plots with 15 languages and colors for 5 grouping 
 plot_df %>%
   ggplot(aes(x, y, color = lang_3)) +
@@ -194,4 +239,6 @@ p5_15 = mds_plot_15(non_multi) %>%
   mutate(group = "Non multi")
 
 plot_df_15 = rbind(p1_15,p2_15,p3_15,p4_15,p5_15)
+
+
 

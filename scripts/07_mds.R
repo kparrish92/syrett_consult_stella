@@ -82,9 +82,9 @@ ggscatter(p1, x = "x", y = "y",
 ### analysis 
 
 glimpse(plot_df)
+time | participant
 
-
-mod = brm(dist_from_center ~ group*lang_2 + (1 | lang_3), data = plot_df)
+mod = brm(dist_from_center ~ group*lang_2 + (lang_2 | lang_3), data = plot_df)
 
 mod %>% write_rds(here("data", "models", "mod_b.rds"))
 
