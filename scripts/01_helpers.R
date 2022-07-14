@@ -420,3 +420,20 @@ mds_plot_1 = function(df)
   return(final_df)
 }
 
+
+make_tree = function(df)
+{
+  x = dist(df)
+  names = df$speaker
+  
+  M <- matrix(0, 45, 45)
+  M[lower.tri(M)] <- x
+  M <- t(M)
+  M[lower.tri(M)] <- x
+  dimnames(M) <- list(names, names)
+  tr <- nj(M)
+  
+  plot = plot(tr)
+  return(plot)
+}
+

@@ -12,19 +12,19 @@ rownames(s_asian) <- s_asian$speaker
 rownames(se_asian) <- se_asian$speaker
 rownames(non_multi) <- non_multi$speaker
 
-eng_mono = eng_mono %>% 
+eng_mono_2 = eng_mono %>% 
   dplyr::select(-speaker)
 
-e_asian = e_asian %>% 
+e_asian_2 = e_asian %>% 
   dplyr::select(-speaker)
 
-s_asian = s_asian %>% 
+s_asian_2 = s_asian %>% 
   dplyr::select(-speaker)
 
-se_asian = se_asian %>% 
+se_asian_2 = se_asian %>% 
   dplyr::select(-speaker)
 
-non_multi = non_multi %>% 
+non_multi_2 = non_multi %>% 
   dplyr::select(-speaker)
 
 
