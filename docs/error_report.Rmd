@@ -187,26 +187,40 @@ plot_ind_est("International ")
 ### Additive Trees 
 
 #### English monolingual Additive Tree
-```{r, fig.height=10, fig.width=10}
+```{r, fig.height=10, fig.width=10, echo=FALSE, message=FALSE, results='hide'}
 make_tree(eng_mono)
+axisPhylo()
+```
+
+```{r, fig.height=10, fig.width=10, echo=FALSE, message=FALSE, results='hide'}
+make_tree_5_colors(eng_mono)
+axisPhylo()
 ```
 
 #### South Asian Additive Tree
-```{r, fig.height=10, fig.width=10}
-make_tree(s_asian)
+```{r, fig.height=10, fig.width=10, echo=FALSE, message=FALSE, results='hide'}
+make_tree_5_colors(s_asian)
+axisPhylo()
 ```
 
 #### East Asian Additive Tree
-```{r, fig.height=10, fig.width=10}
-make_tree(e_asian)
+
+```{r, fig.height=10, fig.width=10, echo=FALSE, message=FALSE, results='hide'}
+make_tree_5_colors(e_asian)
+axisPhylo()
 ```
 
 #### Southeast Asian Additive Tree
-```{r, fig.height=10, fig.width=10}
-make_tree(se_asian)
+
+```{r, fig.height=10, fig.width=10, echo=FALSE, message=FALSE, results='hide'}
+make_tree_5_colors(se_asian)
+axisPhylo()
 ```
 
 #### Non-asian multilingual Additive Tree
-```{r, fig.height=10, fig.width=10}
-make_tree(non_multi)
+
+```{r, fig.height=10, fig.width=10, echo=FALSE, message=FALSE, results='hide'}
+make_tree_5_colors(non_multi)
+axisPhylo()
 ```
+

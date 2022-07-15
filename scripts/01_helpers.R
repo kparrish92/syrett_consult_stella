@@ -437,3 +437,71 @@ make_tree = function(df)
   return(plot)
 }
 
+
+make_tree_5_colors = function(df)
+{
+  df_raw = read.csv(here("data", "data_v.csv"), header=T, na.strings=c(""))
+  df_speakers  <- df_raw %>% 
+    dplyr::select(speaker, lang_1, lang_2, lang_3) %>% 
+    filter(!is.na(speaker))
+  
+  df$speaker_3 = df_speakers$lang_3
+  df$speaker_2 = df_speakers$lang_2
+  df$speaker_1 = df_speakers$lang_1
+  
+  geo <- factor(df$speaker_2)
+  
+  (mycol <- c("#999999", "#E69F00", "#56B4E9",
+              "#009E73", "#F0E442") [geo])
+  
+  
+  
+  x = dist(df)
+  names = df$speaker_3
+  
+  M <- matrix(0, 45, 45)
+  M[lower.tri(M)] <- x
+  M <- t(M)
+  M[lower.tri(M)] <- x
+  dimnames(M) <- list(names, names)
+  tr <- nj(M)
+  
+  plot = plot(tr, tip.color = mycol)
+  return(plot)
+}
+
+
+make_tree_15_colors = function(df)
+{
+  df_raw = read.csv(here("data", "data_v.csv"), header=T, na.strings=c(""))
+  df_speakers  <- df_raw %>% 
+    dplyr::select(speaker, lang_1, lang_2, lang_3) %>% 
+    filter(!is.na(speaker))
+  
+  df$speaker_3 = df_speakers$lang_3
+  df$speaker_2 = df_speakers$lang_2
+  df$speaker_1 = df_speakers$lang_1
+  
+  geo <- factor(df$speaker_3)
+  
+  (mycol <- c("#999999", "#E69F00", "#56B4E9",
+              "#009E73", "#F0E442", "#0072B2", 
+              "#D55E00", "#CC79A7", "red",
+              "blue", "green", "grey",
+              "#a8a8f8", "#bada55", "#57dece") [geo])
+  
+  
+  
+  x = dist(df)
+  names = df$speaker_3
+  
+  M <- matrix(0, 45, 45)
+  M[lower.tri(M)] <- x
+  M <- t(M)
+  M[lower.tri(M)] <- x
+  dimnames(M) <- list(names, names)
+  tr <- nj(M)
+  
+  plot = plot(tr, tip.color = mycol)
+  return(plot)
+}

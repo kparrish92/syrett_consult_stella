@@ -29,7 +29,8 @@ df_raw_eng = read.csv(here("data", "data_v.csv"), header=T, na.strings=c("")) %>
 df_raw_eng[ df_raw_eng == "n/a" ] <- NA
 
 df_speakers  <- df_raw %>% 
-  dplyr::select(speaker, lang_1, lang_2, lang_3) 
+  dplyr::select(speaker, lang_1, lang_2, lang_3) %>% 
+  filter(!is.na(speaker))
 
 
 df_raw <- df_raw %>% 
