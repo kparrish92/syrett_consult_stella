@@ -423,8 +423,24 @@ mds_plot_1 = function(df)
 
 make_tree = function(df)
 {
+  df_raw = read.csv(here("data", "data_v.csv"), header=T, na.strings=c(""))
+  df_speakers  <- df_raw %>% 
+    dplyr::select(speaker, lang_1, lang_2, lang_3) %>% 
+    filter(!is.na(speaker))
+  
+  df$speaker_3 = df_speakers$lang_3
+  df$speaker_2 = df_speakers$lang_2
+  df$speaker_1 = df_speakers$lang_1
+  
+  geo <- factor(df$speaker_2)
+  
+  (mycol <- c("purple", "yellow", "blue",
+              "red", "orange") [geo])
+  
+  
+  
   x = dist(df)
-  names = df$speaker
+  names = df$speaker_3
   
   M <- matrix(0, 45, 45)
   M[lower.tri(M)] <- x
@@ -451,8 +467,8 @@ make_tree_5_colors = function(df)
   
   geo <- factor(df$speaker_2)
   
-  (mycol <- c("#999999", "#E69F00", "#56B4E9",
-              "#009E73", "#F0E442") [geo])
+  (mycol <- c("darkorchid", "gold2", "deepskyblue2",
+              "firebrick2", "darkorange") [geo])
   
   
   
