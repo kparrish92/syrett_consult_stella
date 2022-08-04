@@ -115,7 +115,7 @@ knitr::include_graphics(here("data",                                            
 The results of the model are shown below, where the `conditional_effects` function was used to plot the estimate of each group for each language. 
 Additional model details, including a forest plot, model table, and detailed model significance table are included in a section here called "appendix".
 
-```{r}
+```{r, fig.width=12}
 knitr::include_graphics(here("data",                                                        "plots", "mod_plot.png"))
 ```
 
@@ -187,11 +187,6 @@ plot_ind_est("International ")
 ### Additive Trees 
 
 #### English monolingual Additive Tree
-```{r, fig.height=10, fig.width=10, echo=FALSE, message=FALSE, results='hide'}
-make_tree(eng_mono)
-axisPhylo()
-```
-
 ```{r, fig.height=10, fig.width=10, echo=FALSE, message=FALSE, results='hide'}
 make_tree_5_colors(eng_mono)
 axisPhylo()

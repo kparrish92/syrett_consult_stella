@@ -90,6 +90,10 @@ no_cats_df$group_name <- factor(no_cats_df$group_name,
                                     "east_asian",
                                     "eng_mono"))
 
+cbPalette <- c("#999999", "#E69F00", "#56B4E9",
+               "#009E73", "#F0E442", "#0072B2", 
+               "#D55E00", "#CC79A7")
+
 no_cats_df %>% 
   ggplot(aes(x = no_categories, y = group_name, fill = group_name)) + geom_boxplot(outlier.shape = NA) +
   geom_text(data = mutate_if(no_cats_df_desc, is.numeric, round, 2),

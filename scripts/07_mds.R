@@ -25,6 +25,12 @@ cbPalette <- c("#999999", "#E69F00", "#56B4E9",
                "#009E73", "#F0E442", "#0072B2", 
                "#D55E00", "#CC79A7")
 
+plot_df$group = stringr::str_replace(plot_df$group, "Non multi", "Non-Asian Multilingual")
+plot_df$group = stringr::str_replace(plot_df$group, "English mono", "English monolingual")
+
+plot_df$lang_2 = stringr::str_replace(plot_df$lang_2, "American", "American English")
+plot_df$lang_2 = stringr::str_replace(plot_df$lang_2, "International ", "International English")
+
 plot_df %>%
   ggplot(aes(x, y, color = lang_2)) +
   geom_point(size = 1, alpha = .6) + 
@@ -92,15 +98,19 @@ brm_df = conditional_effects(mod)
 
 re_plot_condef = as.data.frame(brm_df[["group:lang_2"]])
 
+re_plot_condef$group = stringr::str_replace(re_plot_condef$group, "Non multi", "Non-Asian Multilingual")
+re_plot_condef$group = stringr::str_replace(re_plot_condef$group, "mono", "monolinugal")
+
 
 re_plot_condef %>% 
-  ggplot(aes(x = effect1__, y = estimate__, fill = effect2__)) +
+  ggplot(aes(x = group, y = estimate__, fill = effect2__)) +
   geom_pointrange(aes(ymin = lower__, ymax = upper__), 
                   shape = 21, 
                   position = position_dodge(width = .6)) + 
   scale_fill_manual(values=cbPalette, name = "Language type") + 
   theme_minimal() +
   xlab("Language Group") + ylab("Estimate") +
+  theme(axis.text = element_text(size = 4.5)) +
   ggsave(here("data",
               "plots", "mod_plot.png"))
 

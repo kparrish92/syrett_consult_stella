@@ -1,5 +1,5 @@
 
-df_lang_cats = read.csv(here("data", "data_v.csv"), header=T, na.strings=c("")) %>% 
+df_lang_cats = read.csv(here::here("data", "data_v.csv"), header=T, na.strings=c("")) %>% 
   select(speaker, lang_1, lang_2, lang_3) %>% 
   filter(!is.na(speaker))
 

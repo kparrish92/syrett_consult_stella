@@ -314,6 +314,9 @@ plot_ind_est = function(eff)
   fixef_df_param = re_plot_condef %>% 
     filter(effect2__ == eff)
   
+  re_plot_condef$group = stringr::str_replace(re_plot_condef$group, "non_multi", "Non-Asian Multilingual")
+
+  
   plot = re_plot_condef %>% 
     filter(effect2__ == eff) %>% 
     ggplot(aes(y = reorder(effect1__, +estimate__), x = estimate__, fill = group, 
@@ -322,7 +325,7 @@ plot_ind_est = function(eff)
                     shape = 21, 
                     position = position_dodge(width = .6)) + 
     theme_minimal() +
-    theme(text=element_text(size=10,  family="Times")) +
+    theme(text=element_text(size=10)) +
     xlim(-1,11) +
     theme(legend.position = "none", legend.text=element_text(size=5),
           legend.title=element_text(size=5)) +
@@ -330,7 +333,7 @@ plot_ind_est = function(eff)
     scale_fill_manual(values=cbPalette) + 
     geom_text(data = mutate_if(fixef_df_param, is.numeric, round, 2),
               aes(label = paste0(estimate__, " [", lower__, " - ", upper__, "]"), x = Inf), 
-              hjust = "inward", size = 2.5, family="Times") +
+              hjust = "inward", size = 2.5) +
     ggtitle(paste("Parameter estimates for distance from the centroid for", eff))
   return(plot)
 }

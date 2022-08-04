@@ -3,7 +3,9 @@ source(here("scripts", "01_helpers.R"))
 source(here("scripts", "03_load_data.R"))
 
 # Visualize error rate per group 
-
+cbPalette <- c("#999999", "#E69F00", "#56B4E9",
+               "#009E73", "#F0E442", "#0072B2", 
+               "#D55E00", "#CC79A7")
 
 e2_error_df = read.csv(here("data", "tidy", "e2_error_df.csv")) %>% 
   mutate(error_rate = error_2_df/45)
@@ -47,6 +49,9 @@ d3 = e15_error_df %>%
 df_c = rbind(d1,d2,d3) 
 
 level_order = c("2 category", "5 category", "15 category")
+
+df_c$group = stringr::str_replace(df_c$group, "non_multi", "Non-Asian Multilingual")
+
 
 df_c %>% 
   ggplot(aes(y = error_r, x = factor(grouping, level = level_order), fill = group, group = group)) +
