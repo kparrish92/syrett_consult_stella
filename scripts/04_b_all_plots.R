@@ -31,26 +31,58 @@ no_cats_df %>%
   ggplot(aes(x = no_categories, y = group_name, fill = group_name)) + geom_boxplot(outlier.shape = NA) +
   geom_text(data = mutate_if(no_cats_df_desc, is.numeric, round, 2),
             aes(label = paste0(mean_cats, " (", sd_cats, ")"), x = Inf), 
-            hjust = "inward", size = 5) + xlim(0, 20) + ylab("Group Name") + 
+            hjust = "inward", size = 3) + xlim(0, 20) + ylab("Group Name") + 
   theme_minimal() + theme(legend.position = "none") +
   scale_y_discrete(labels=c("eng_mono" = "English monolingual", 
                             "east_asian" = "East Asian",
                             "se_asian" = "Southeast Asian",
                             "south_asian" = "South Asian",
-                            "non_asian_multi" = "Non-Asian Multilingual")) +
+                            "non_asian_multi" = "Non-Asian multilingual")) +
   ggtitle("Average Number of Categories Created per group") +
   scale_fill_manual(values=cbPalette) +
   scale_x_continuous(name="Number of Categories", breaks=c(0,5,10,15), limits=c(0, 20)) +
   theme(text=
           element_text(
-            size=14,
-            family="Arial")) +
+            size=14)) +
   ggsave(here("docs", "figs", "desc_all.png"), width = 8, height= 7)
+
+## Dump cat plot 
+
+t_desc = t %>% 
+  group_by(group_name) %>% 
+  summarize(mean_cats = mean(V1), sd_cats = sd(V1)) 
+
+
+
+t %>% 
+  filter(!is.na(Code)) %>% 
+  ggplot(aes(x = as.numeric(V1), y = group_name, fill = group_name)) + geom_boxplot(outlier.shape = NA) +
+  geom_text(data = mutate_if(t_desc, is.numeric, round, 2),
+            aes(label = paste0(mean_cats, " (", sd_cats, ")"), x = Inf), 
+            hjust = "inward", size = 3) + xlim(0, 20) + ylab("Group Name") + 
+  theme_minimal() + theme(legend.position = "none") +
+  scale_y_discrete(labels=c("eng_mono" = "English monolingual", 
+                            "east_asian" = "East Asian",
+                            "se_asian" = "Southeast Asian",
+                            "south_asian" = "South Asian",
+                            "non_asian_multi" = "Non-Asian multilingual")) +
+  ggtitle("Average Number of Categories Created per group") +
+  scale_fill_manual(values=cbPalette) +
+  scale_x_continuous(name="Maximum Number of Speakers in a category", breaks=c(0,5,10,15), limits=c(0, 20)) +
+  theme(text=
+          element_text(
+            size=14)) +
+  geom_vline(xintercept = 
+               mean(as.numeric(t$V1)), 
+             linetype = "dashed", 
+             alpha = .5) + 
+  ggsave(here("docs", "figs", "max_mems.png"), width = 8, height= 7)
+
 
 ### MDS plot 
 
 p1 = mds_plot(eng_mono) %>% 
-  mutate(group = "English mono")
+  mutate(group = "English monolingual")
 
 p2 = mds_plot(e_asian) %>% 
   mutate(group = "East Asian")
@@ -62,9 +94,13 @@ p4 = mds_plot(se_asian) %>%
   mutate(group = "Southeast Asian")
 
 p5 = mds_plot(non_multi) %>% 
-  mutate(group = "Non multi")
+  mutate(group = "Non-Asian multilingual")
 
 plot_df = rbind(p1,p2,p3,p4,p5)
+
+
+plot_df$lang_2 = stringr::str_replace(plot_df$lang_2, "American", "American English")
+plot_df$lang_2 = stringr::str_replace(plot_df$lang_2, "International ", "International English")
 
 plot_df %>%
   ggplot(aes(x, y, color = lang_2)) +
@@ -139,20 +175,33 @@ plot_df %>%
 
 ## Mod plot 
 
+re_plot_condef$group = stringr::str_replace(re_plot_condef$group, "Non multi", "Non-Asian Multilingual")
+re_plot_condef$group = stringr::str_replace(re_plot_condef$group, "mono", "monolinugal")
+
+re_plot_condef$effect2__ = stringr::str_replace(re_plot_condef$effect2__, "American", "American English")
+re_plot_condef$effect2__ = stringr::str_replace(re_plot_condef$effect2__, "International ", "International English")
+
+
 re_plot_condef %>% 
-  ggplot(aes(x = effect1__, y = estimate__, fill = effect2__)) +
+  ggplot(aes(x = group, y = estimate__, fill = effect2__)) +
   geom_pointrange(aes(ymin = lower__, ymax = upper__), 
                   shape = 21, 
                   position = position_dodge(width = .6)) + 
   scale_fill_manual(values=cbPalette, name = "Language type") + 
   theme_minimal() +
   xlab("Language Group") + ylab("Estimate") +
+  theme(axis.text = element_text(size = 4.5)) +
   ggsave(here("data",
               "plots", "mod_plot.png"))
+
+
 
 ## Error plot 
 
 level_order = c("2 category", "5 category", "15 category")
+
+error_rates$group = stringr::str_replace(error_rates$group, "Non-Asian Multilingual", "Non-Asian multilingual")
+
 
 error_rates %>% 
   ggplot(aes(y = error_r, x = factor(grouping, level = level_order), fill = group, group = group)) +
@@ -164,38 +213,7 @@ error_rates %>%
   xlab("Number of categories considered correct") + ggsave(here("data",
                                                                 "plots", "error_plot.png"))
 
-## Dump cat plot 
 
-t_desc = t %>% 
-  group_by(group_name) %>% 
-  summarize(mean_cats = mean(V1), sd_cats = sd(V1)) 
-
-
-t %>% 
-  filter(!is.na(Code)) %>% 
-  ggplot(aes(x = as.numeric(V1), y = as.factor(group_name), fill = as.factor(group_name))) + 
-  geom_boxplot(outlier.shape = NA) + 
-  scale_fill_brewer(palette = "Set3") + 
-  geom_vline(xintercept = 
-               mean(as.numeric(t$V1)), 
-             linetype = "dashed", 
-             alpha = .5) + 
-  xlab("Maximum Number of Speakers in a category") + 
-  ylab("Group") +
-  theme(text=
-          element_text(
-            size=8,
-            family="Arial")) +
-  scale_y_discrete(labels=c("eng_mono" = "English monolingual", 
-                            "east_asian" = "East Asian",
-                            "se_asian" = "Southeast Asian",
-                            "south_asian" = "South Asian",
-                            "non_asian_multi" = "Non-Asian Multilingual")) +
-  theme_minimal() + theme(legend.position = "none") + 
-  geom_text(data = mutate_if(t_desc, is.numeric, round, 2),
-            aes(label = paste0(mean_cats, " (", sd_cats, ")"), x = Inf), 
-            hjust = "inward", size = 3) + 
-  ggsave(here("docs", "figs", "max_mems.png"), width = 8, height= 7)
 
 
 

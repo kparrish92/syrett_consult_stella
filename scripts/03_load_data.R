@@ -62,7 +62,11 @@ brm_df = conditional_effects(mod)
 
 re_plot_condef = as.data.frame(brm_df[["group:lang_2"]])
 
-error_rates = read.csv(here("data", "tidy", "error_rates.csv"))
+error_rates = read.csv(here("data", "tidy", "error_rates.csv")) %>% 
+  rename(Group = group)
+
+error_rates$Group = stringr::str_replace(error_rates$Group, "Non-Asian Multilingual", "Non-Asian multilingual")
+
 
 
 

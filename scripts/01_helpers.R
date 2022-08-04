@@ -314,7 +314,7 @@ plot_ind_est = function(eff)
   fixef_df_param = re_plot_condef %>% 
     filter(effect2__ == eff)
   
-  re_plot_condef$group = stringr::str_replace(re_plot_condef$group, "non_multi", "Non-Asian Multilingual")
+  re_plot_condef$group = stringr::str_replace(re_plot_condef$group, "non_multi", "Non-Asian multilingual")
 
   
   plot = re_plot_condef %>% 

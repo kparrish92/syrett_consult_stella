@@ -67,6 +67,15 @@ The figure below shows these averages, with the standard deviation in parenthese
 knitr::include_graphics(here("docs", "figs", "desc_all.png"))
 ```
 
+### Dump Category
+
+This boxplot shows the the number of members in the category of each participant that contained the most members, where the mean and standard deviation of the number of members in the largest group per group is included on the right side of the plot.
+Interestingly, the English monolinguals had the least number of speakers on average in their largest group, while also creating the most groups on average. 
+
+```{r}
+knitr::include_graphics(here("docs",                                                        "figs", "max_mems.png"))
+```
+
 ### Error Rates 
 
 The figure below shows the error rates by each group in the 2, 5 and 15 error categories. 
@@ -80,7 +89,7 @@ knitr::include_graphics(here("data",                                            
 error_rates %>% 
   filter(grouping == "2 category") %>% 
   mutate("Error rate (sd)" = paste0(round(error_r, digits = 3), " (", round(error_r_sd, digits = 3), ")")) %>% 
-  dplyr::select(group, `Error rate (sd)`) %>% 
+  dplyr::select(Group, `Error rate (sd)`) %>% 
   knitr::kable(format = "pandoc", caption = "2 category error rate per group") %>%
   kable_styling(full_width = F)
 ```
@@ -89,7 +98,7 @@ error_rates %>%
 error_rates %>% 
   filter(grouping == "5 category") %>% 
   mutate("Error rate (sd)" = paste0(round(error_r, digits = 3), " (", round(error_r_sd, digits = 3), ")")) %>% 
-  dplyr::select(group, `Error rate (sd)`) %>% 
+  dplyr::select(Group, `Error rate (sd)`) %>% 
   knitr::kable(format = "pandoc", caption = "5 category error rate per group") %>%
   kable_styling(full_width = F)
 ```
@@ -98,7 +107,7 @@ error_rates %>%
 error_rates %>% 
   filter(grouping == "15 category") %>% 
   mutate("Error rate (sd)" = paste0(round(error_r, digits = 3), " (", round(error_r_sd, digits = 3), ")")) %>% 
-  dplyr::select(group, `Error rate (sd)`) %>% 
+  dplyr::select(Group, `Error rate (sd)`) %>% 
   knitr::kable(format = "pandoc", caption = "15 category error rate per group") %>%
   kable_styling(full_width = F)
 ```
@@ -119,70 +128,6 @@ Additional model details, including a forest plot, model table, and detailed mod
 knitr::include_graphics(here("data",                                                        "plots", "mod_plot.png"))
 ```
 
-
-## Appendix Items 
-
-### Dump Category
-
-This boxplot shows the the number of members in the category of each participant that contained the most members, where the mean and standard deviation of the number of members in the largest group per group is included on the right side of the plot.
-Interestingly, the English monolinguals had the least number of speakers on average in their largest group, while also creating the most groups on average. 
-
-```{r}
-knitr::include_graphics(here("docs",                                                        "figs", "max_mems.png"))
-```
-
-The following items show the full Bayesian model in a forest plot, a table showing the parameter estimates and a more detailed table including information related to the probability of an effect being positive/negative (probability of direction; pd), the probability of a "significant" (non-zero) effect (ps), and the Highest Density interval (including the mean, median and upper and lower bounds of 95% of the most probable parameter estimates).
-
-```{r}
-knitr::include_graphics(here("data",                                                        "plots", "mcmc_plot.png"))
-```
-
-```{r}
-tab_model(mod)
-```
-
-
-```{r}
-describe_posterior(
-  mod,
-  effects = "fixed",
-  component = "all",
-  test = c("p_direction", "p_significance"),
-  centrality = "all"
-) %>%
-  as.data.frame() %>% 
-  mutate(across(where(is.numeric), round, 3)) %>% 
-  knitr::kable(row.names = FALSE)
-
-``` 
-
-
-### Updates:
-
-Here are the new plots:
-
-Individual plots of each parameter estimate from the model with numerical values - these show the same estimates from the complete conditional effects plot, but are re-organized and presented per group, along with the (numerical) parameter estimates themselves with the 95% HDI.
-
-
-```{r}
-plot_ind_est("South")
-```
-
-```{r}
-plot_ind_est("East")
-```
-
-```{r}
-plot_ind_est("South East")
-```
-
-```{r}
-plot_ind_est("American")
-```
-
-```{r}
-plot_ind_est("International ")
-```
 
 ### Additive Trees 
 
@@ -212,10 +157,36 @@ make_tree_5_colors(se_asian)
 axisPhylo()
 ```
 
-#### Non-asian multilingual Additive Tree
+#### Non-Asian multilingual Additive Tree
 
 ```{r, fig.height=10, fig.width=10, echo=FALSE, message=FALSE, results='hide'}
 make_tree_5_colors(non_multi)
 axisPhylo()
 ```
 
+## Appendix Items 
+
+The following items show the full Bayesian model in a forest plot, a table showing the parameter estimates and a more detailed table including information related to the probability of an effect being positive/negative (probability of direction; pd), the probability of a "significant" (non-zero) effect (ps), and the Highest Density interval (including the mean, median and upper and lower bounds of 95% of the most probable parameter estimates).
+
+```{r}
+knitr::include_graphics(here("data",                                                        "plots", "mcmc_plot.png"))
+```
+
+```{r}
+tab_model(mod)
+```
+
+
+```{r}
+describe_posterior(
+  mod,
+  effects = "fixed",
+  component = "all",
+  test = c("p_direction", "p_significance"),
+  centrality = "all"
+) %>%
+  as.data.frame() %>% 
+  mutate(across(where(is.numeric), round, 3)) %>% 
+  knitr::kable(row.names = FALSE)
+
+``` 
